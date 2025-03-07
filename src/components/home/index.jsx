@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/authContext';
-import { collection, getDocs, doc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase/firebase';
-import { Briefcase, ExternalLink } from 'lucide-react';
+import { Briefcase, ExternalLink, Trash2 } from 'lucide-react';
 
 const Home = () => {
     const { currentUser, userLoggedIn } = useAuth();
@@ -15,17 +15,16 @@ const Home = () => {
         const appliedDate = new Date(dateApplied);
         const currentDate = new Date();
         const daysDifference = Math.floor((currentDate - appliedDate) / (1000 * 60 * 60 * 24));
-
+    
         if (daysDifference >= 14) {
-            return 'hover:bg-red-100 border-red-100';
+            return 'hover:bg-red-100 border-2 border-red-500';
         } else if (daysDifference >= 7) {
-            return 'hover:bg-orange-100 border-orange-100';
+            return 'hover:bg-orange-100 border-2 border-orange-500';
         } else if (daysDifference >= 0) {
-            return 'hover:bg-green-100 border-green-100';
+            return 'hover:bg-green-100 border-2 border-green-500';
         }
-        return 'hover:bg-gray-50 border-gray-100';
+        return 'hover:bg-gray-50 border-2 border-gray-300';
     };
-
     useEffect(() => {
         const fetchApplications = async () => {
             if (currentUser) {
@@ -33,7 +32,7 @@ const Home = () => {
                     const userDocRef = doc(firestore, 'userApplicationData', currentUser.uid);
                     const userAppsRef = collection(userDocRef, 'applications');
                     const snapshot = await getDocs(userAppsRef);
-
+    
                     const apps = snapshot.docs.map(doc => {
                         const data = doc.data();
                         return {
@@ -43,7 +42,9 @@ const Home = () => {
                             formattedDate: data.dateApplied ? data.dateApplied.toDate().toLocaleDateString() : 'N/A'
                         };
                     });
-
+    
+                    apps.sort((a, b) => a.dateApplied - b.dateApplied);
+    
                     setApplications(apps);
                 } catch (error) {
                     console.error('Error fetching applications:', error);
@@ -52,9 +53,21 @@ const Home = () => {
                 }
             }
         };
-
         fetchApplications();
     }, [currentUser]);
+    const handleDelete = async (appId) => {
+        if (window.confirm("Are you sure you want to delete this job?")) {
+            try {
+                const userDocRef = doc(firestore, 'userApplicationData', currentUser.uid);
+                const appDocRef = doc(userDocRef, 'applications', appId);
+                await deleteDoc(appDocRef);
+
+                setApplications(prevApps => prevApps.filter(app => app.id !== appId));
+            } catch (error) {
+                console.error("Error deleting application:", error);
+            }
+        }
+    };
 
     if (currentUser == null){
         return <Navigate to="/login" replace={true} />;
@@ -105,9 +118,21 @@ const Home = () => {
                                                 <span className="font-medium">Status:</span> {app.status}
                                             </div>
                                         )}
-                                        <button>
-                                            <Link to={`/editJob/${app.id}`}>Edit Job</Link>
-                                        </button>
+                                        <div className="flex space-x-3 mt-2">
+                                            <Link 
+                                                to={`/editJob/${app.id}`} 
+                                                className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
+                                            >
+                                                Edit
+                                            </Link>
+                                            <button 
+                                                onClick={() => handleDelete(app.id)} 
+                                                className="px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition flex items-center"
+                                            >
+                                                <Trash2 size={16} className="mr-1" />
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 );
                             })}
