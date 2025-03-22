@@ -17,6 +17,14 @@ const Header = () => {
                 <>
                     <button
                         onClick={() => {
+                            navigate('/addJob');
+                        }}
+                        className='text-sm text-blue-600 underline'
+                    >
+                        Add New Job
+                    </button>
+                    <button
+                        onClick={() => {
                             doSignOut().then(() => {
                                 navigate('/login');
                             });
@@ -24,14 +32,6 @@ const Header = () => {
                         className='text-sm text-blue-600 underline'
                     >
                         Logout
-                    </button>
-                    <button
-                        onClick={() => {
-                            navigate('/addJob');
-                        }}
-                        className='text-sm text-blue-600 underline'
-                    >
-                        Add New Job
                     </button>
                 </>
             ) : (

@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../contexts/authContext'
 import { doCreateUserWithEmailAndPassword, doSendEmailVerification } from '../../../firebase/auth'
+import { getAuth } from "firebase/auth";
+
 
 const Register = () => {
 
@@ -26,7 +28,21 @@ const Register = () => {
             await doSendEmailVerification(user);
             setAuthMessage('Signup successful! Please check your email for a verification link.')
         }
+        const auth = getAuth();
+
+        try {
+            const userCredential = await doCreateUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Send Firebase's built-in email verification
+            await doSendEmailVerification(user);
+            alert("A verification email has been sent. Please check your inbox.");
+
+        } catch (error) {
+            console.error("Error signing up:", error.message);
+        }
     }
+
     
 
     return (
