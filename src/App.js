@@ -2,7 +2,8 @@ import Login from "./components/auth/login";
 import Register from "./components/auth/register";
 import AddJob from "./components/pages/addJob";
 import EditJob from "./components/pages/editJob";
-// import ErrorPage from "./components/errorPage"
+import ErrorPage from "./components/pages/errorPage";
+import GuestBanner from "./components/header/guestBanner";
 
 import Header from "./components/header";
 import Home from "./components/home";
@@ -32,15 +33,16 @@ function App() {
       path: "/editJob/:id",
       element: <EditJob />,
     },
-    // {
-    //   path: "*",
-    //   element: <ErrorPage />,
-    // }
+    {
+      path: "*",
+      element: <ErrorPage />,
+    }
   ];
   let routesElement = useRoutes(routesArray);
   return (
     <AuthProvider>
       <Header />
+      <GuestBanner />
       <div className="w-full h-screen flex flex-col pt-[var(--header-height)]">
         {routesElement}
       </div>

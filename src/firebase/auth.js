@@ -1,5 +1,7 @@
 import { auth } from "./firebase";
 import {
+  getAuth,
+  signInAnonymously,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -41,4 +43,15 @@ export const doSendEmailVerification = () => {
   return sendEmailVerification(auth.currentUser, {
     url: `${window.location.origin}/home`,
   });
+};
+
+export const doSignInAnonymously = async () => {
+    const auth = getAuth();
+    try {
+        const userCredential = await signInAnonymously(auth);
+        return userCredential.user;
+    } catch (error) {
+        console.error("Error signing in anonymously:", error);
+        throw error;
+    }
 };

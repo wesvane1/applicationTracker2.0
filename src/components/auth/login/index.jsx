@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
-import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../../firebase/auth';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle, doSignInAnonymously } from '../../../firebase/auth';
 import { useAuth } from '../../../contexts/authContext';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+
 
 const Login = () => {
     const { userLoggedIn } = useAuth();
@@ -63,6 +64,18 @@ const Login = () => {
             });
         }
     };
+    const onAnonymousSignIn = async (e) => {
+        e.preventDefault();
+        if (!isSigningIn) {
+            setIsSigningIn(true);
+            try {
+                await doSignInAnonymously();
+            } catch (error) {
+                setErrorMessage("Failed to sign in anonymously. Please try again.");
+                setIsSigningIn(false);
+            }
+        }
+    };
 
     return (
         <div>
@@ -108,12 +121,13 @@ const Login = () => {
                         </div>
 
                         <button
-                            type="submit"
                             disabled={isSigningIn}
-                            className={`w-full px-4 py-2 text-white font-medium rounded-lg ${isSigningIn ? 'bg-gray-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl transition duration-300'}`}
+                            onClick={onAnonymousSignIn}
+                            className={`w-full flex items-center justify-center py-2.5 border rounded-lg text-sm font-medium ${isSigningIn ? 'cursor-not-allowed' : 'hover:bg-gray-100 transition duration-300 active:bg-gray-100'}`}
                         >
-                            {isSigningIn ? 'Signing In...' : 'Sign In'}
+                            {isSigningIn ? 'Signing In...' : 'Continue as Guest'}
                         </button>
+
                         {errorMessage && (
                             <div className="p-2 mt-2 text-center text-red-600 font-bold bg-red-100 border border-red-400 rounded-md">
                                 {errorMessage}
@@ -124,7 +138,7 @@ const Login = () => {
                     <p className="text-center text-sm">
                         Don't have an account? <Link to={'/register'} className="hover:underline font-bold">Sign up</Link>
                     </p>
-
+{/* 
                     <div className="flex flex-row text-center w-full">
                         <div className="border-b-2 mb-2.5 mr-2 w-full"></div>
                         <div className="text-sm font-bold w-fit">OR</div>
@@ -145,7 +159,7 @@ const Login = () => {
                             </g>
                         </svg>
                         {isSigningIn ? 'Signing In...' : 'Sign Up With Google'}
-                    </button>
+                    </button> */}
                 </div>
             </main>
         </div>
