@@ -3,7 +3,7 @@ import Register from "./components/auth/register";
 import AddJob from "./components/pages/addJob";
 import EditJob from "./components/pages/editJob";
 import ErrorPage from "./components/pages/errorPage";
-import GuestBanner from "./components/header/guestBanner";
+// import GuestBanner from "./components/header/guestBanner";
 
 import Header from "./components/header";
 import Home from "./components/home";
@@ -42,7 +42,7 @@ function App() {
   return (
     <AuthProvider>
       <Header />
-      <GuestBanner />
+      {/* <GuestBanner /> */}
       <div className="w-full h-screen flex flex-col pt-[var(--header-height)]">
         {routesElement}
       </div>

@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
       setIsEmailUser(isEmail);
 
       // Check if user is anonymous
-      setIsAnonymous(user.isAnonymous || false);
+      // setIsAnonymous(user.isAnonymous || false);
 
       setUserLoggedIn(true);
     } else {

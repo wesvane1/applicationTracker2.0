@@ -14,20 +14,6 @@ const Login = () => {
     const [isSigningIn, setIsSigningIn] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    // const onSubmit = async (e) => {
-    //     e.preventDefault();
-    //     if (!isSigningIn) {
-    //         setIsSigningIn(true);
-    //         setErrorMessage('');
-    //         try {
-    //             await doSignInWithEmailAndPassword(email, password);
-    //         } catch (error) {
-    //             setErrorMessage('Incorrect email or password. Please try again.');
-    //             setIsSigningIn(false);
-    //         }
-    //     }
-    //     // sendTestEmail()
-    // };
     const onSubmit = async (e) => {
         e.preventDefault();
         if (!isSigningIn) {
@@ -119,6 +105,17 @@ const Login = () => {
                                 </span>
                             </div>
                         </div>
+
+                        <button
+                            type="submit"
+                            disabled={isSigningIn}
+                            className={`w-full flex items-center justify-center py-2.5 border rounded-lg text-sm font-medium ${
+                                isSigningIn ? 'cursor-not-allowed' : 'hover:bg-gray-100 transition duration-300 active:bg-gray-100'
+                            }`}
+                        >
+                            {isSigningIn ? 'Signing In...' : 'Sign In'}
+                        </button>
+
 
                         <button
                             disabled={isSigningIn}
